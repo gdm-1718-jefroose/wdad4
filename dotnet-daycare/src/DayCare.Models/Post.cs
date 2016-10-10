@@ -1,14 +1,23 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace DayCare.Models
 {
-    public class Post : BaseEntity<Int64>
+    public class Post : BaseEntity<Int32>
     {
-        public string Title{get; set; }
-        public string Subtitle{get; set; }
-        public string Content{get; set; }
-        public string Tag{get; set; }
-        public List<Category> Categories{get; set;}
+        public string Title 
+        {
+            get
+            {
+                return Name;
+            }
+        }
+        public string ThumbnailURL { get; set; }
+        public string Body { get; set; }
+
+        public Nullable<Int16> CategoryId { get; set; }
+        public Category Category { get; set; }
+
+        public List<PostTag> Tags { get; set; }
     }
 }

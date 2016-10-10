@@ -3,8 +3,7 @@ using System.Collections.Generic;
 
 namespace DayCare.Models
 {
-    public class Tag : BaseEntity<Int64>
+    public class Activity : BaseEntity<Int16>
     {
-        public List<PostTag> Posts { get; set; }
     }
 }
