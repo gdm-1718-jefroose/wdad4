@@ -1,0 +1,109 @@
+.ahs-main-header {
+  padding: 20px;
+  min-height: 180px;
+}
+.ahs-main-header > h3 {
+  font-size: 24px;
+  padding-top: 20px;
+  padding-bottom: 5px;
+  margin: 0;
+}
+.ahs-main-header > h4 {
+  font-size: 18px;
+  padding-bottom: 20px;
+  margin: 0;
+}
+.ahs-list-overview {
+  padding: 20px;
+  font-size: 14px;
+  line-height: 11.5px;
+}
+.ahs-list-overview h3 {
+  color:rgba(68,68,68,1);
+  font-size: 23px;
+  line-height: 11.5px;
+}
+.ahs-list-overview__list {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+.ahs-list-overview__list > li {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.0980392);
+  transition: all 0.1s;
+}
+.ahs-list-overview__list > li > a {
+  display: block;
+  padding: 5px;
+  text-decoration: none;
+  color: rgb(5, 132, 148);
+  transition: all 0.2s;
+}
+.ahs-list-overview__list > li > a:hover {
+  padding-left: 10px;
+}
+.ahs-list-overview__list > li > a > i {
+  font-size: 11px;
+  margin-right: 5px;
+}
+.ahs-card-holder {
+  padding: 20px;
+}
+.ahs-card-holder--first {
+  margin-top: -81px;
+}
+@media (max-width: 839px) {
+  .ahs-card-holder {
+      margin-top: 0px;
+  }
+}
+.ahs-card {
+    width: auto;
+    z-index: auto;
+    border-radius: 3px;
+    overflow: visible;
+}
+.ahs-table {
+  display: table;
+  width: 100%;
+}
+.ahs-textfield--block {
+  display: block;
+  width: 100%;
+}
+.form-holder {
+  padding: 20px;
+}
+*[data-is-softdelete="true"] i {
+  opacity: 0.4;
+}
+
+.ahs-sidebar__navigation ul {
+  margin: 0;
+  padding: 0;
+  list-style: 0;
+}
+
+.ahs-sidebar .ahs-sidebar__navigation .mdl-navigation__link {
+  font-size: 14px;
+  padding: 10px 14px;
+}
+
+.ahs-sidebar .ahs-sidebar__navigation .mdl-navigation__link:hover {
+  background: #607d8b;
+  color: rgba(0, 0, 0, 0.87) !important;
+}
+
+.ahs-sidebar .ahs-sidebar__navigation .mdl-navigation__link i{
+  margin-right: 7px;
+}
+
+.ahs-sidebar .ahs-sidebar__navigation .mdl-navigation__link:hover i {
+  color: rgba(0, 0, 0, 0.76) !important;
+}
+
+.navigation__section-header {
+  font-size: 14px;
+  text-transform: uppercase;
+  padding: 10px 14px;
+}

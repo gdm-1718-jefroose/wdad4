@@ -1,0 +1,39 @@
+@model DayCare.Models.ViewModels.ActivityTypeViewModel
+@{
+    ViewBag.Title = "Activity Type Management";
+    ViewBag.SubTitle = "Manage all the activity types on your SAAS platform";
+    ViewBag.Description = "Create a activity type via the form or go back to the list of activity types.";
+    Layout = "~/Areas/Backoffice/Views/Shared/_Layout.cshtml";
+}
+<div class="mdl-cell mdl-cell--3-col mdl-cell--12-col-tablet mdl-cell--12-col-phone mdl-color--grey-100">
+    @Html.Partial("_QuickActionsPartial")
+</div>
+<div class="mdl-cell mdl-cell--9-col mdl-cell--12-col-tablet mdl-cell--12-col-phone no-p-l">
+    <div class="ahs-card-holder ahs-card-holder--first">
+        <div class="mdl-card mdl-shadow--1dp ahs-card">
+          <div class="mdl-card__title">
+            <h2 class="mdl-card__title-text">Create a new activity type</h2>
+          </div>
+          <div class="form-holder">
+            <form asp-controller="ActivityType" asp-action="Create" method="post" asp-antiforgery="true">
+                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label ahs-textfield--block">
+                    <input class="mdl-textfield__input" asp-for="ActivityType.Name">
+                    <label class="mdl-textfield__label" asp-for="ActivityType.Name">Name</label>
+                    <span class="mdl-textfield__error" asp-for="ActivityType.Name" ></span>
+                </div>
+                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label ahs-textfield--block">
+                    <input class="mdl-textfield__input" asp-for="ActivityType.Description">
+                    <label class="mdl-textfield__label" asp-for="ActivityType.Description">Description</label>
+                    <span class="mdl-textfield__error" asp-for="ActivityType.Description"></span>
+                </div>
+                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label ahs-textfield--block">
+                    <label class="mdl-textfield__label" asp-for="ActivityType.ParentActivityType">Parent Activity Type</label>
+                    <select asp-for="ActivityType.ParentActivityTypeId" asp-items="Model.ActivityTypes"></select> 
+                    <span class="mdl-textfield__error" asp-for="ActivityType.ParentActivityType"></span>
+                </div>
+                <button type="submit" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">Save</button>
+            </form>
+          </div>
+        </div>
+    </div>
+</div>

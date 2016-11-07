@@ -6,10 +6,13 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Mvc.Formatters;
+using Newtonsoft.Json.Serialization;
 using Npgsql.EntityFrameworkCore.PostgreSQL;
 using OpenIddict;
 using DayCare.Models;
@@ -43,9 +46,17 @@ namespace WebApplication
         public void ConfigureServices(IServiceCollection services)
         {
             // Cross Origin Resource Sharing
-            services.AddCors(options => options.AddPolicy("AllowAll", 
-            p => p.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()));
-            services.AddMvc();
+            var corsBuilder = new CorsPolicyBuilder();
+            corsBuilder.AllowAnyHeader();
+            corsBuilder.AllowAnyMethod();
+            corsBuilder.AllowAnyOrigin();
+            corsBuilder.AllowCredentials();
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll", corsBuilder.Build());
+            });
+            
 
             // Add framework services.
             services.AddDbContext<ApplicationDbContext>(options =>
@@ -55,7 +66,15 @@ namespace WebApplication
                 .AddEntityFrameworkStores<ApplicationDbContext, Guid>()
                 .AddDefaultTokenProviders();
 
-            services.AddMvc();
+            // ReferenceLooping in JSON Serialization
+            services.AddMvc().AddJsonOptions(options =>
+            {
+                // handle loops correctly
+                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+
+                // use standard name conversion of properties
+                options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+            });
 
             // Add OpenIddict
             /*services.AddOpenIddict<ApplicationUser, ApplicationRole, ApplicationDbContext, Guid>()
@@ -74,6 +93,8 @@ namespace WebApplication
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
+
+            app.UseCors("AllowAll");
 
             if (env.IsDevelopment())
             {
@@ -98,9 +119,7 @@ namespace WebApplication
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
-
-            app.UseCors("AllowAll");
-
+            
             // Seeding the database
             ApplicationDbContextSeeder.Initialize(app.ApplicationServices);
         }

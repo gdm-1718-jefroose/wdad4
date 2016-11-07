@@ -12,8 +12,13 @@ using DayCare.Models.Security;
 namespace DayCare.API.Controllers
 {
     [Route("api/[controller]")]
-     public class GroupsController : BaseController {
-        public GroupsController(ApplicationDbContext applicationDbContext, UserManager<ApplicationUser> userManager):base(applicationDbContext, userManager) {
+     public class GroupsController : BaseController 
+     {
+        private const string FAILGETENTITIES = "Failed to get groups from the API";
+        private const string FAILGETENTITYBYID = "Failed to get group from the API by Id: {0}";
+
+        public GroupsController(ApplicationDbContext applicationDbContext, UserManager<ApplicationUser> userManager):base(applicationDbContext, userManager) 
+        {
         }
 
         [HttpGet(Name = "GetGroups")]
@@ -22,7 +27,7 @@ namespace DayCare.API.Controllers
             var model = await ApplicationDbContext.Groups.ToListAsync();
             if (model == null)
             {
-                var msg = String.Format("Failed to get groups from the API");
+                var msg = String.Format(FAILGETENTITIES);
                 return NotFound(msg);
             }
             return new OkObjectResult(model);
@@ -34,7 +39,7 @@ namespace DayCare.API.Controllers
             var model = await ApplicationDbContext.Groups.FirstOrDefaultAsync(o => o.Id == groupId);
             if (model == null)
             {
-                var msg = String.Format("Failed to get group from the API");
+                var msg = String.Format(FAILGETENTITYBYID, groupId);
                 return NotFound(msg);
             }
             return new OkObjectResult(model);

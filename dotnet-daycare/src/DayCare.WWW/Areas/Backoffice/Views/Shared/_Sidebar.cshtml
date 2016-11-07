@@ -1,0 +1,37 @@
+<div class="mdl-layout__drawer mdl-color--blue-grey-900 mdl-color-text--blue-grey-50 ahs-sidebar">
+  <header class="mdl-color--blue-grey-800 ahs-sidebar__header">
+    <img src="images/user.jpg" class="demo-avatar">
+    <div class="demo-avatar-dropdown">
+      <span>hello@example.com</span>
+      <div class="mdl-layout-spacer"></div>
+      <button id="accbtn" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon">
+        <i class="material-icons" role="presentation">arrow_drop_down</i>
+        <span class="visuallyhidden">Accounts</span>
+      </button>
+      <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="accbtn">
+        <li class="mdl-menu__item">hello@example.com</li>
+        <li class="mdl-menu__item">info@example.com</li>
+        <li class="mdl-menu__item"><i class="material-icons">add</i>Add another account...</li>
+      </ul>
+    </div>
+  </header>
+  <nav class="mdl-navigation ahs-sidebar__navigation">
+    <ul>
+      <li><a class="mdl-navigation__link mdl-color-text--blue-grey-200" asp-controller="Home" asp-action="Index"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">home</i>Home</a></li>
+      <li class="mdl-color-text--blue-grey-400 navigation__section-header">DayCare</li>
+      <li><a class="mdl-navigation__link mdl-color-text--blue-grey-200" asp-controller="Organisation" asp-action="Index"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">child_care</i>Organisation</a></li>
+      <li><a class="mdl-navigation__link mdl-color-text--blue-grey-200" asp-controller="Location" asp-action="Index"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">store_mall_directory</i>Locations</a></li>
+      <li><a class="mdl-navigation__link mdl-color-text--blue-grey-200" asp-controller="Group" asp-action="Index"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">group_work</i>Groups</a></li>
+      <li><a class="mdl-navigation__link mdl-color-text--blue-grey-200" asp-controller="Organisation" asp-action="Index"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">face</i>Persons</a></li>
+      <li><a class="mdl-navigation__link mdl-color-text--blue-grey-200" asp-controller="ActivityType" asp-action="Index"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">toys</i>Activity Types</a></li>
+      <li><a class="mdl-navigation__link mdl-color-text--blue-grey-200" asp-controller="Organisation" asp-action="Index"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">extension</i>Activities</a></li>
+      <li class="mdl-color-text--blue-grey-400 navigation__section-header">Blog</li>
+      <li><a class="mdl-navigation__link mdl-color-text--blue-grey-200" asp-controller="Organisation" asp-action="Index"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">description</i>Posts</a></li>
+      <li><a class="mdl-navigation__link mdl-color-text--blue-grey-200" asp-controller="Organisation" asp-action="Index"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">book</i>Categories</a></li>
+      <li><a class="mdl-navigation__link mdl-color-text--blue-grey-200" asp-controller="Organisation" asp-action="Index"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">label</i>Tags</a></li>
+      <li class="mdl-color-text--blue-grey-400 navigation__section-header">Account</li>
+      <li><a class="mdl-navigation__link mdl-color-text--blue-grey-200" asp-controller="Organisation" asp-action="Index"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">account_box</i>Users</a></li>
+      <li><a class="mdl-navigation__link mdl-color-text--blue-grey-200" asp-controller="Organisation" asp-action="Index"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">security</i>Roles</a></li>
+    </ul>
+  </nav>
+</div>

@@ -17,7 +17,9 @@ namespace DayCare.Db
         public DbSet<Post> Posts { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Tag> Tags { get; set; }
+        public DbSet<Person> Persons { get; set; }
         public DbSet<ActivityType> ActivityTypes { get; set; }
+        public DbSet<Activity> Activities { get; set; }
         
         public ApplicationDbContext(DbContextOptions options) : base(options)
         {
@@ -30,7 +32,7 @@ namespace DayCare.Db
 
             base.OnModelCreating(builder);
 
-            // Organisation Model Mapping
+            // Model: Organisation
             builder.Entity<Organisation>()
                 .HasKey(o => o.Id);
 
@@ -54,7 +56,7 @@ namespace DayCare.Db
                 .HasDefaultValueSql("now()")
                 .ValueGeneratedOnAddOrUpdate();
 
-            // Location Model Mapping
+            // Model: Location
             builder.Entity<Location>()
                 .HasKey(o => o.Id);
 
@@ -113,6 +115,61 @@ namespace DayCare.Db
                 .HasOne(g => g.Location)
                 .WithMany(l => l.Groups)
                 .HasForeignKey(g => g.LocationId);
+
+            // Person
+            builder.Entity<Person>()
+                .HasKey(p => p.Id);
+
+            builder.Entity<Person>()
+                .HasDiscriminator<string>("PersonType")
+                .HasValue<Person>("person_base")
+                .HasValue<Child>("person_child")
+                .HasValue<Parent>("person_parent")
+                .HasValue<OrganisationEmployee>("person_employee");
+
+            builder.Entity<Person>()
+                .Property(p => p.FirstName)
+                .HasMaxLength(255)
+                .IsRequired();
+
+            builder.Entity<Person>()
+                .Property(p => p.SurName)
+                .HasMaxLength(255)
+                .IsRequired();
+
+            builder.Entity<Person>()
+                .Property(p => p.Gender)
+                .IsRequired();
+
+            builder.Entity<Person>()
+                .Property(p => p.MartialStatus)
+                .IsRequired(false);
+
+            builder.Entity<Person>()
+                .Property(p => p.CreatedAt)
+                .HasDefaultValueSql("now()")
+                .ValueGeneratedOnAdd();
+
+            builder.Entity<Person>()
+                .Property(p => p.UpdatedAt)
+                .HasDefaultValueSql("now()")
+                .ValueGeneratedOnAddOrUpdate();
+
+            // Many-To-Many in EF7 (10-10-2016)
+            // Parent / Counselor can have many children
+            // Child can be assigned to many parents / counselors
+            builder.Entity<ParentChild>()
+                .HasKey(t => new { t.ParentId, t.ChildId });
+
+            builder.Entity<ParentChild>()
+                .HasOne(pc => pc.Parent)
+                .WithMany(p => p.Children)
+                .HasForeignKey(pc => pc.ParentId);
+
+            builder.Entity<ParentChild>()
+                .HasOne(pc => pc.Child)
+                .WithMany(p => p.Parents)
+                .HasForeignKey(pc => pc.ChildId);
 
             // Post Model Mapping
             builder.Entity<Post>()
@@ -216,7 +273,7 @@ namespace DayCare.Db
                 .WithMany(p => p.Posts)
                 .HasForeignKey(pt => pt.TagId);
 
-            // ActivityType Model Mapping
+            // Model: ActivityType 
             builder.Entity<ActivityType>()
                 .HasKey(o => o.Id);
 
@@ -248,6 +305,8 @@ namespace DayCare.Db
                 .HasOne(c => c.ParentActivityType)
                 .WithMany(p => p.ChildActivityTypes)
                 .HasForeignKey(c => c.ParentActivityTypeId);
+
+            
         }
     }
 }

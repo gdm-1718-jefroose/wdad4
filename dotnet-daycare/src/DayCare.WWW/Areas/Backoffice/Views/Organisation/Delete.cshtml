@@ -1,0 +1,31 @@
+@model DayCare.Models.ViewModels.ActionOrganisationViewModel
+@{
+    ViewBag.Title = "Organisation Management";
+    ViewBag.SubTitle = "Manage all the organisations on your SAAS platform";
+    ViewBag.Description = "Create an organisation via the form or go back to the list of organisations.";
+    Layout = "~/Areas/Backoffice/Views/Shared/_Layout.cshtml";
+}
+<div class="mdl-cell mdl-cell--3-col mdl-cell--12-col-tablet mdl-cell--12-col-phone mdl-color--grey-100">
+    @Html.Partial("_QuickActionsPartial")
+</div>
+<div class="mdl-cell mdl-cell--9-col mdl-cell--12-col-tablet mdl-cell--12-col-phone no-p-l">
+    <div class="ahs-card-holder ahs-card-holder--first">
+        <div class="mdl-card mdl-shadow--1dp ahs-card">
+          <div class="mdl-card__title">
+            <h2 class="mdl-card__title-text">
+                @Model.Action an existing organisation</text>
+            </h2>
+          </div>
+          <div class="form-holder">
+            <p>Do you wish to @Model.Action the organisation @Model.BaseEntity.Name?</p>
+            <form asp-controller="Organisation" asp-action="Delete" method="post" asp-antiforgery="true">
+                <input asp-for="BaseEntity.Id" type="hidden">
+                <input asp-for="BaseEntity.Name" type="hidden">
+                <input asp-for="BaseEntity.Description" type="hidden">
+                <input asp-for="ActionType" type="hidden">
+                <button type="submit" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">@Model.Action</button>
+            </form>
+          </div>
+        </div>
+    </div>
+</div>

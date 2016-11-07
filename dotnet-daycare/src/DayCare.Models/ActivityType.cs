@@ -7,7 +7,7 @@ namespace DayCare.Models
     {
         public string ThumbnailURL  { get; set; }
 
-        public Int16 ParentActivityTypeId { get; set; }
+        public Nullable<Int16> ParentActivityTypeId { get; set; }
         public ActivityType ParentActivityType { get; set; }
         public List<ActivityType> ChildActivityTypes { get; set; }
     }

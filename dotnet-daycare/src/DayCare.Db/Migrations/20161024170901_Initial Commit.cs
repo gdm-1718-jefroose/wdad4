@@ -21,7 +21,7 @@ namespace DayCare.Db.Migrations
                     DeletedAt = table.Column<DateTime>(nullable: true),
                     Description = table.Column<string>(maxLength: 511, nullable: false),
                     Name = table.Column<string>(maxLength: 255, nullable: false),
-                    ParentActivityTypeId = table.Column<short>(nullable: false),
+                    ParentActivityTypeId = table.Column<short>(nullable: true),
                     ThumbnailURL = table.Column<string>(nullable: false),
                     UpdatedAt = table.Column<DateTime>(nullable: true, defaultValueSql: "now()")
                 },
@@ -33,7 +33,7 @@ namespace DayCare.Db.Migrations
                         column: x => x.ParentActivityTypeId,
                         principalTable: "ActivityTypes",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -77,6 +77,28 @@ namespace DayCare.Db.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Organisations", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Persons",
+                columns: table => new
+                {
+                    Id = table.Column<long>(nullable: false)
+                        .Annotation("Npgsql:ValueGeneratedOnAdd", true),
+                    CreatedAt = table.Column<DateTime>(nullable: false, defaultValueSql: "now()")
+                        .Annotation("Npgsql:ValueGeneratedOnAdd", true),
+                    DayOfBirth = table.Column<DateTime>(nullable: true),
+                    DeletedAt = table.Column<DateTime>(nullable: true),
+                    FirstName = table.Column<string>(maxLength: 255, nullable: false),
+                    Gender = table.Column<byte>(nullable: false),
+                    MartialStatus = table.Column<byte>(nullable: true),
+                    PersonType = table.Column<string>(nullable: false),
+                    SurName = table.Column<string>(maxLength: 255, nullable: false),
+                    UpdatedAt = table.Column<DateTime>(nullable: true, defaultValueSql: "now()")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Persons", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -177,6 +199,19 @@ namespace DayCare.Db.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "OpenIddictAuthorizations",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(nullable: false)
+                        .Annotation("Npgsql:ValueGeneratedOnAdd", true),
+                    Scope = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OpenIddictAuthorizations", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "OpenIddictScopes",
                 columns: table => new
                 {
@@ -187,33 +222,6 @@ namespace DayCare.Db.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_OpenIddictScopes", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Posts",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("Npgsql:ValueGeneratedOnAdd", true),
-                    Body = table.Column<string>(nullable: false),
-                    CategoryId = table.Column<short>(nullable: true),
-                    CreatedAt = table.Column<DateTime>(nullable: false, defaultValueSql: "now()")
-                        .Annotation("Npgsql:ValueGeneratedOnAdd", true),
-                    DeletedAt = table.Column<DateTime>(nullable: true),
-                    Description = table.Column<string>(maxLength: 511, nullable: false),
-                    Name = table.Column<string>(maxLength: 255, nullable: false),
-                    ThumbnailURL = table.Column<string>(nullable: true),
-                    UpdatedAt = table.Column<DateTime>(nullable: true, defaultValueSql: "now()")
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Posts", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Posts_Categories_CategoryId",
-                        column: x => x.CategoryId,
-                        principalTable: "Categories",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -242,6 +250,30 @@ namespace DayCare.Db.Migrations
                         name: "FK_Locations_Organisations_OrganisationId",
                         column: x => x.OrganisationId,
                         principalTable: "Organisations",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ParentChild",
+                columns: table => new
+                {
+                    ParentId = table.Column<long>(nullable: false),
+                    ChildId = table.Column<long>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ParentChild", x => new { x.ParentId, x.ChildId });
+                    table.ForeignKey(
+                        name: "FK_ParentChild_Persons_ChildId",
+                        column: x => x.ChildId,
+                        principalTable: "Persons",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ParentChild_Persons_ParentId",
+                        column: x => x.ParentId,
+                        principalTable: "Persons",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -333,21 +365,155 @@ namespace DayCare.Db.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "OpenIddictAuthorizations",
+                name: "OpenIddictTokens",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false)
                         .Annotation("Npgsql:ValueGeneratedOnAdd", true),
-                    Scope = table.Column<string>(nullable: true),
-                    UserId = table.Column<Guid>(nullable: true)
+                    ApplicationId = table.Column<Guid>(nullable: true),
+                    AuthorizationId = table.Column<Guid>(nullable: true),
+                    Type = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_OpenIddictAuthorizations", x => x.Id);
+                    table.PrimaryKey("PK_OpenIddictTokens", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_OpenIddictAuthorizations_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
+                        name: "FK_OpenIddictTokens_OpenIddictApplications_ApplicationId",
+                        column: x => x.ApplicationId,
+                        principalTable: "OpenIddictApplications",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_OpenIddictTokens_OpenIddictAuthorizations_AuthorizationId",
+                        column: x => x.AuthorizationId,
+                        principalTable: "OpenIddictAuthorizations",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Groups",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("Npgsql:ValueGeneratedOnAdd", true),
+                    CreatedAt = table.Column<DateTime>(nullable: false, defaultValueSql: "now()")
+                        .Annotation("Npgsql:ValueGeneratedOnAdd", true),
+                    DeletedAt = table.Column<DateTime>(nullable: true),
+                    Description = table.Column<string>(maxLength: 511, nullable: false),
+                    LocationId = table.Column<int>(nullable: false),
+                    MaxCapacity = table.Column<short>(nullable: false),
+                    MinCapacity = table.Column<short>(nullable: false),
+                    Name = table.Column<string>(maxLength: 255, nullable: false),
+                    UpdatedAt = table.Column<DateTime>(nullable: true, defaultValueSql: "now()")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Groups", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Groups_Locations_LocationId",
+                        column: x => x.LocationId,
+                        principalTable: "Locations",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Activities",
+                columns: table => new
+                {
+                    Id = table.Column<long>(nullable: false)
+                        .Annotation("Npgsql:ValueGeneratedOnAdd", true),
+                    ActivityTypeId = table.Column<short>(nullable: false),
+                    ChildId = table.Column<long>(nullable: true),
+                    CreatedAt = table.Column<DateTime>(nullable: false),
+                    DeletedAt = table.Column<DateTime>(nullable: true),
+                    Description = table.Column<string>(nullable: true),
+                    GroupId = table.Column<int>(nullable: true),
+                    LocationId = table.Column<int>(nullable: true),
+                    Name = table.Column<string>(nullable: true),
+                    OrganisationId = table.Column<short>(nullable: true),
+                    UpdatedAt = table.Column<DateTime>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Activities", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Activities_ActivityTypes_ActivityTypeId",
+                        column: x => x.ActivityTypeId,
+                        principalTable: "ActivityTypes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Activities_Persons_ChildId",
+                        column: x => x.ChildId,
+                        principalTable: "Persons",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Activities_Groups_GroupId",
+                        column: x => x.GroupId,
+                        principalTable: "Groups",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Activities_Locations_LocationId",
+                        column: x => x.LocationId,
+                        principalTable: "Locations",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Activities_Organisations_OrganisationId",
+                        column: x => x.OrganisationId,
+                        principalTable: "Organisations",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Posts",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("Npgsql:ValueGeneratedOnAdd", true),
+                    Body = table.Column<string>(nullable: false),
+                    CategoryId = table.Column<short>(nullable: true),
+                    CreatedAt = table.Column<DateTime>(nullable: false, defaultValueSql: "now()")
+                        .Annotation("Npgsql:ValueGeneratedOnAdd", true),
+                    DeletedAt = table.Column<DateTime>(nullable: true),
+                    Description = table.Column<string>(maxLength: 511, nullable: false),
+                    GroupId = table.Column<int>(nullable: true),
+                    LocationId = table.Column<int>(nullable: true),
+                    Name = table.Column<string>(maxLength: 255, nullable: false),
+                    OrganisationId = table.Column<short>(nullable: true),
+                    ThumbnailURL = table.Column<string>(nullable: true),
+                    UpdatedAt = table.Column<DateTime>(nullable: true, defaultValueSql: "now()")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Posts", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Posts_Categories_CategoryId",
+                        column: x => x.CategoryId,
+                        principalTable: "Categories",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Posts_Groups_GroupId",
+                        column: x => x.GroupId,
+                        principalTable: "Groups",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Posts_Locations_LocationId",
+                        column: x => x.LocationId,
+                        principalTable: "Locations",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Posts_Organisations_OrganisationId",
+                        column: x => x.OrganisationId,
+                        principalTable: "Organisations",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -376,64 +542,30 @@ namespace DayCare.Db.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "Groups",
-                columns: table => new
-                {
-                    Id = table.Column<long>(nullable: false)
-                        .Annotation("Npgsql:ValueGeneratedOnAdd", true),
-                    CreatedAt = table.Column<DateTime>(nullable: false, defaultValueSql: "now()")
-                        .Annotation("Npgsql:ValueGeneratedOnAdd", true),
-                    DeletedAt = table.Column<DateTime>(nullable: true),
-                    Description = table.Column<string>(maxLength: 511, nullable: false),
-                    LocationId = table.Column<int>(nullable: false),
-                    Name = table.Column<string>(maxLength: 255, nullable: false),
-                    UpdatedAt = table.Column<DateTime>(nullable: true, defaultValueSql: "now()")
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Groups", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Groups_Locations_LocationId",
-                        column: x => x.LocationId,
-                        principalTable: "Locations",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
+            migrationBuilder.CreateIndex(
+                name: "IX_Activities_ActivityTypeId",
+                table: "Activities",
+                column: "ActivityTypeId");
 
-            migrationBuilder.CreateTable(
-                name: "OpenIddictTokens",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(nullable: false)
-                        .Annotation("Npgsql:ValueGeneratedOnAdd", true),
-                    ApplicationId = table.Column<Guid>(nullable: true),
-                    AuthorizationId = table.Column<Guid>(nullable: true),
-                    Type = table.Column<string>(nullable: true),
-                    UserId = table.Column<Guid>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_OpenIddictTokens", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_OpenIddictTokens_OpenIddictApplications_ApplicationId",
-                        column: x => x.ApplicationId,
-                        principalTable: "OpenIddictApplications",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_OpenIddictTokens_OpenIddictAuthorizations_AuthorizationId",
-                        column: x => x.AuthorizationId,
-                        principalTable: "OpenIddictAuthorizations",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_OpenIddictTokens_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
+            migrationBuilder.CreateIndex(
+                name: "IX_Activities_ChildId",
+                table: "Activities",
+                column: "ChildId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Activities_GroupId",
+                table: "Activities",
+                column: "GroupId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Activities_LocationId",
+                table: "Activities",
+                column: "LocationId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Activities_OrganisationId",
+                table: "Activities",
+                column: "OrganisationId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ActivityTypes_ParentActivityTypeId",
@@ -456,9 +588,34 @@ namespace DayCare.Db.Migrations
                 column: "OrganisationId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ParentChild_ChildId",
+                table: "ParentChild",
+                column: "ChildId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ParentChild_ParentId",
+                table: "ParentChild",
+                column: "ParentId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Posts_CategoryId",
                 table: "Posts",
                 column: "CategoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Posts_GroupId",
+                table: "Posts",
+                column: "GroupId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Posts_LocationId",
+                table: "Posts",
+                column: "LocationId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Posts_OrganisationId",
+                table: "Posts",
+                column: "OrganisationId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_PostTag_PostId",
@@ -518,11 +675,6 @@ namespace DayCare.Db.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_OpenIddictAuthorizations_UserId",
-                table: "OpenIddictAuthorizations",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_OpenIddictTokens_ApplicationId",
                 table: "OpenIddictTokens",
                 column: "ApplicationId");
@@ -531,11 +683,6 @@ namespace DayCare.Db.Migrations
                 name: "IX_OpenIddictTokens_AuthorizationId",
                 table: "OpenIddictTokens",
                 column: "AuthorizationId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_OpenIddictTokens_UserId",
-                table: "OpenIddictTokens",
-                column: "UserId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -543,10 +690,10 @@ namespace DayCare.Db.Migrations
             migrationBuilder.DropPostgresExtension("uuid-ossp");
 
             migrationBuilder.DropTable(
-                name: "ActivityTypes");
+                name: "Activities");
 
             migrationBuilder.DropTable(
-                name: "Groups");
+                name: "ParentChild");
 
             migrationBuilder.DropTable(
                 name: "PostTag");
@@ -573,7 +720,10 @@ namespace DayCare.Db.Migrations
                 name: "OpenIddictTokens");
 
             migrationBuilder.DropTable(
-                name: "Locations");
+                name: "ActivityTypes");
+
+            migrationBuilder.DropTable(
+                name: "Persons");
 
             migrationBuilder.DropTable(
                 name: "Posts");
@@ -585,19 +735,25 @@ namespace DayCare.Db.Migrations
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
+                name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
                 name: "OpenIddictApplications");
 
             migrationBuilder.DropTable(
                 name: "OpenIddictAuthorizations");
 
             migrationBuilder.DropTable(
-                name: "Organisations");
-
-            migrationBuilder.DropTable(
                 name: "Categories");
 
             migrationBuilder.DropTable(
-                name: "AspNetUsers");
+                name: "Groups");
+
+            migrationBuilder.DropTable(
+                name: "Locations");
+
+            migrationBuilder.DropTable(
+                name: "Organisations");
         }
     }
 }

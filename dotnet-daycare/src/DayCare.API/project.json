@@ -43,6 +43,7 @@
       "version": "1.0.0-preview2-update1",
       "type": "build"
     },
+    "Newtonsoft.Json": "9.0.1",
     "OpenIddict": "1.0.0-*",
     "DayCare.Db": {
       "target": "project",

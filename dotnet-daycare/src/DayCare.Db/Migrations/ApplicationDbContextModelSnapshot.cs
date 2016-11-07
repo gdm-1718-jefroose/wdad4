@@ -16,6 +16,46 @@ namespace DayCare.Db.Migrations
                 .HasAnnotation("Npgsql:PostgresExtension:.uuid-ossp", "'uuid-ossp', '', ''")
                 .HasAnnotation("ProductVersion", "1.0.0-rtm-21431");
 
+            modelBuilder.Entity("DayCare.Models.Activity", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<short>("ActivityTypeId");
+
+                    b.Property<long?>("ChildId");
+
+                    b.Property<DateTime>("CreatedAt");
+
+                    b.Property<DateTime?>("DeletedAt");
+
+                    b.Property<string>("Description");
+
+                    b.Property<int?>("GroupId");
+
+                    b.Property<int?>("LocationId");
+
+                    b.Property<string>("Name");
+
+                    b.Property<short?>("OrganisationId");
+
+                    b.Property<DateTime?>("UpdatedAt");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ActivityTypeId");
+
+                    b.HasIndex("ChildId");
+
+                    b.HasIndex("GroupId");
+
+                    b.HasIndex("LocationId");
+
+                    b.HasIndex("OrganisationId");
+
+                    b.ToTable("Activities");
+                });
+
             modelBuilder.Entity("DayCare.Models.ActivityType", b =>
                 {
                     b.Property<short>("Id")
@@ -35,7 +75,7 @@ namespace DayCare.Db.Migrations
                         .IsRequired()
                         .HasAnnotation("MaxLength", 255);
 
-                    b.Property<short>("ParentActivityTypeId");
+                    b.Property<short?>("ParentActivityTypeId");
 
                     b.Property<string>("ThumbnailURL")
                         .IsRequired();
@@ -85,7 +125,7 @@ namespace DayCare.Db.Migrations
 
             modelBuilder.Entity("DayCare.Models.Group", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
                     b.Property<DateTime>("CreatedAt")
@@ -99,6 +139,10 @@ namespace DayCare.Db.Migrations
                         .HasAnnotation("MaxLength", 511);
 
                     b.Property<int>("LocationId");
+
+                    b.Property<short>("MaxCapacity");
+
+                    b.Property<short>("MinCapacity");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -185,6 +229,60 @@ namespace DayCare.Db.Migrations
                     b.ToTable("Organisations");
                 });
 
+            modelBuilder.Entity("DayCare.Models.ParentChild", b =>
+                {
+                    b.Property<long>("ParentId");
+
+                    b.Property<long>("ChildId");
+
+                    b.HasKey("ParentId", "ChildId");
+
+                    b.HasIndex("ChildId");
+
+                    b.HasIndex("ParentId");
+
+                    b.ToTable("ParentChild");
+                });
+
+            modelBuilder.Entity("DayCare.Models.Person", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<DateTime?>("DayOfBirth");
+
+                    b.Property<DateTime?>("DeletedAt");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasAnnotation("MaxLength", 255);
+
+                    b.Property<byte>("Gender");
+
+                    b.Property<byte?>("MartialStatus");
+
+                    b.Property<string>("PersonType")
+                        .IsRequired();
+
+                    b.Property<string>("SurName")
+                        .IsRequired()
+                        .HasAnnotation("MaxLength", 255);
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasDefaultValueSql("now()");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Persons");
+
+                    b.HasDiscriminator<string>("PersonType").HasValue("person_base");
+                });
+
             modelBuilder.Entity("DayCare.Models.Post", b =>
                 {
                     b.Property<int>("Id")
@@ -205,9 +303,15 @@ namespace DayCare.Db.Migrations
                         .IsRequired()
                         .HasAnnotation("MaxLength", 511);
 
+                    b.Property<int?>("GroupId");
+
+                    b.Property<int?>("LocationId");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasAnnotation("MaxLength", 255);
+
+                    b.Property<short?>("OrganisationId");
 
                     b.Property<string>("ThumbnailURL");
 
@@ -218,6 +322,12 @@ namespace DayCare.Db.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
+
+                    b.HasIndex("GroupId");
+
+                    b.HasIndex("LocationId");
+
+                    b.HasIndex("OrganisationId");
 
                     b.ToTable("Posts");
                 });
@@ -464,11 +574,7 @@ namespace DayCare.Db.Migrations
 
                     b.Property<string>("Scope");
 
-                    b.Property<Guid?>("UserId");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("OpenIddictAuthorizations");
                 });
@@ -496,25 +602,74 @@ namespace DayCare.Db.Migrations
 
                     b.Property<string>("Type");
 
-                    b.Property<Guid?>("UserId");
-
                     b.HasKey("Id");
 
                     b.HasIndex("ApplicationId");
 
                     b.HasIndex("AuthorizationId");
 
-                    b.HasIndex("UserId");
-
                     b.ToTable("OpenIddictTokens");
+                });
+
+            modelBuilder.Entity("DayCare.Models.Child", b =>
+                {
+                    b.HasBaseType("DayCare.Models.Person");
+
+
+                    b.ToTable("Child");
+
+                    b.HasDiscriminator().HasValue("person_child");
+                });
+
+            modelBuilder.Entity("DayCare.Models.OrganisationEmployee", b =>
+                {
+                    b.HasBaseType("DayCare.Models.Person");
+
+
+                    b.ToTable("OrganisationEmployee");
+
+                    b.HasDiscriminator().HasValue("person_employee");
+                });
+
+            modelBuilder.Entity("DayCare.Models.Parent", b =>
+                {
+                    b.HasBaseType("DayCare.Models.Person");
+
+
+                    b.ToTable("Parent");
+
+                    b.HasDiscriminator().HasValue("person_parent");
+                });
+
+            modelBuilder.Entity("DayCare.Models.Activity", b =>
+                {
+                    b.HasOne("DayCare.Models.ActivityType", "ActivityType")
+                        .WithMany()
+                        .HasForeignKey("ActivityTypeId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("DayCare.Models.Child", "Child")
+                        .WithMany("Activities")
+                        .HasForeignKey("ChildId");
+
+                    b.HasOne("DayCare.Models.Group", "Group")
+                        .WithMany()
+                        .HasForeignKey("GroupId");
+
+                    b.HasOne("DayCare.Models.Location", "Location")
+                        .WithMany()
+                        .HasForeignKey("LocationId");
+
+                    b.HasOne("DayCare.Models.Organisation", "Organisation")
+                        .WithMany()
+                        .HasForeignKey("OrganisationId");
                 });
 
             modelBuilder.Entity("DayCare.Models.ActivityType", b =>
                 {
                     b.HasOne("DayCare.Models.ActivityType", "ParentActivityType")
                         .WithMany("ChildActivityTypes")
-                        .HasForeignKey("ParentActivityTypeId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("ParentActivityTypeId");
                 });
 
             modelBuilder.Entity("DayCare.Models.Category", b =>
@@ -540,11 +695,36 @@ namespace DayCare.Db.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
+            modelBuilder.Entity("DayCare.Models.ParentChild", b =>
+                {
+                    b.HasOne("DayCare.Models.Child", "Child")
+                        .WithMany("Parents")
+                        .HasForeignKey("ChildId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("DayCare.Models.Parent", "Parent")
+                        .WithMany("Children")
+                        .HasForeignKey("ParentId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
             modelBuilder.Entity("DayCare.Models.Post", b =>
                 {
                     b.HasOne("DayCare.Models.Category", "Category")
                         .WithMany("Posts")
                         .HasForeignKey("CategoryId");
+
+                    b.HasOne("DayCare.Models.Group", "Group")
+                        .WithMany()
+                        .HasForeignKey("GroupId");
+
+                    b.HasOne("DayCare.Models.Location", "Location")
+                        .WithMany()
+                        .HasForeignKey("LocationId");
+
+                    b.HasOne("DayCare.Models.Organisation", "Organisation")
+                        .WithMany()
+                        .HasForeignKey("OrganisationId");
                 });
 
             modelBuilder.Entity("DayCare.Models.PostTag", b =>
@@ -597,13 +777,6 @@ namespace DayCare.Db.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("OpenIddict.OpenIddictAuthorization<System.Guid>", b =>
-                {
-                    b.HasOne("DayCare.Models.Security.ApplicationUser")
-                        .WithMany("Authorizations")
-                        .HasForeignKey("UserId");
-                });
-
             modelBuilder.Entity("OpenIddict.OpenIddictToken<System.Guid>", b =>
                 {
                     b.HasOne("OpenIddict.OpenIddictApplication<System.Guid>")
@@ -613,10 +786,6 @@ namespace DayCare.Db.Migrations
                     b.HasOne("OpenIddict.OpenIddictAuthorization<System.Guid>")
                         .WithMany("Tokens")
                         .HasForeignKey("AuthorizationId");
-
-                    b.HasOne("DayCare.Models.Security.ApplicationUser")
-                        .WithMany("Tokens")
-                        .HasForeignKey("UserId");
                 });
         }
     }

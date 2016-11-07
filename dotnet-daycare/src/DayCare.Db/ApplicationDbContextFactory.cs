@@ -12,7 +12,7 @@ namespace DayCare.Db
         public ApplicationDbContext Create(DbContextFactoryOptions options)
         {
             var builder = new DbContextOptionsBuilder<ApplicationDbContext>();
-            builder.UseNpgsql("User ID=originaljef;Password=postgres;Host=localhost;Port=5432;Database=daycare;Pooling=true;");
+            builder.UseNpgsql("User ID=postgres;Password=wickedman;Host=localhost;Port=5432;Database=daycare;Pooling=true;");
             return new ApplicationDbContext(builder.Options);
         }
     }

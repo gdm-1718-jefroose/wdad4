@@ -17,7 +17,13 @@ namespace DayCare.Models
 
         public Nullable<Int16> CategoryId { get; set; }
         public Category Category { get; set; }
-
         public List<PostTag> Tags { get; set; }
+
+        public Nullable<Int32> GroupId { get; set; }
+        public Group Group { get; set; } 
+        public Nullable<Int32> LocationId { get; set; }
+        public Location Location { get; set; }
+        public Nullable<Int16> OrganisationId { get; set; }
+        public Organisation Organisation { get; set; }
     }
 }

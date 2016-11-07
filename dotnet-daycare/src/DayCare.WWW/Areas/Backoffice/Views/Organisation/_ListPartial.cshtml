@@ -1,0 +1,53 @@
+@model ICollection<DayCare.Models.Organisation>
+@Html.AntiForgeryToken()
+@if (Model != null && Model.Count() > 0)
+{
+      <table class="mdl-data-table mdl-js-data-table mdl-data-table--selectable is-upgraded ahs-table" data-upgraded=",MaterialDataTable">
+        <colgroup>
+          <col class="auto-cell-size p-r-20">
+        </colgroup>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Created</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @foreach (var organisation in Model)
+          {
+            <tr data-id="organisation-@organisation.Id">
+              <td>@organisation.Name</td>
+              <td>@organisation.Description</td>
+              <td>@organisation.CreatedAt</td>
+              <td>
+                <a asp-controller="Organisation" asp-action="Edit" asp-route-id="@organisation.Id">
+                  <i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">edit</i>
+                </a>
+                @if (@organisation.DeletedAt != null)
+                {
+                    <a asp-controller="Organisation" asp-action="Delete" asp-route-id="@organisation.Id" asp-route-actionType="5" data-is-softdelete="true">
+                      <i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">delete</i>
+                    </a>
+                }
+                else
+                {
+                    <a asp-controller="Organisation" asp-action="Delete" asp-route-id="@organisation.Id" asp-route-actionType="4">
+                      <i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">delete</i>
+                    </a>
+                }
+                <a asp-controller="Organisation" asp-action="Delete" asp-route-id="@organisation.Id" asp-route-actionType="3">
+                  <i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">delete_forever</i>
+                </a>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+}
+else
+{
+    <p>No Organisations in the database!</p>
+}
+</div>

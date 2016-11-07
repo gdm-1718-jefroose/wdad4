@@ -1,0 +1,20 @@
+@model ICollection<DayCare.Models.Location>
+@{
+    ViewBag.Title = "Location Management";
+    ViewBag.SubTitle = "Manage all the locations on your SAAS platform";
+    ViewBag.Description = "Select a location to edit or select multiple locations to do export functions or mass asignment to them";
+    Layout = "~/Areas/Backoffice/Views/Shared/_Layout.cshtml";
+}
+<div class="mdl-cell mdl-cell--3-col mdl-cell--12-col-tablet mdl-cell--12-col-phone mdl-color--grey-100">
+    @Html.Partial("_QuickActionsPartial")
+</div>
+<div class="mdl-cell mdl-cell--9-col mdl-cell--12-col-tablet mdl-cell--12-col-phone no-p-l">
+    <div class="ahs-card-holder ahs-card-holder--first">
+        <div class="mdl-card mdl-shadow--1dp ahs-card">
+          <div class="mdl-card__title">
+            <h2 class="mdl-card__title-text">Location listing</h2>
+          </div>
+          @Html.Partial("_ListPartial", @Model)
+        </div>
+    </div>
+</div>
